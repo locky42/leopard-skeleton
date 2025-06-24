@@ -1,0 +1,12 @@
+routes:
+  - path: /custom-route
+    method: GET
+    controller: HomeController
+    action: customMethod
+
+controllers:
+  - controller: HomeController
+    path: /
+
+  - controller: Admin\PageController
+    path: /admin/page

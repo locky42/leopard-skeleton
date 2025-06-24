@@ -1,0 +1,12 @@
+{
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.3",
+        "psr/container": "^2.0",
+        "symfony/yaml": "^7.3"
+    }
+}
