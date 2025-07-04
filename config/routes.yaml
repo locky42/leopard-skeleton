@@ -8,5 +8,8 @@ controllers:
   - controller: HomeController
     path: /
 
-  - controller: Admin\PageController
-    path: /admin/page
+  - namespace: Admin
+    path: /admin
+
+  - namespace: Api
+    path: /api

@@ -41,8 +41,28 @@ class Router
         // Базові шляхи контролерів
         if (!empty($config['controllers'])) {
             foreach ($config['controllers'] as $entry) {
-                $controller = 'App\\Controllers\\' . $entry['controller'];
-                $this->yamlControllers[$controller] = $entry['path'] ?? null;
+                if (isset($entry['namespace'])) {
+                    $this->loadNamespaceControllers($entry['namespace'], $entry['path']);
+                } else {
+                    $controller = 'App\\Controllers\\' . $entry['controller'];
+                    $this->yamlControllers[$controller] = $entry['path'] ?? null;
+                }
+            }
+        }
+    }
+
+    private function loadNamespaceControllers(string $namespace, string $basePath): void
+    {
+        $dir = __DIR__ . '/../Controllers/' . $namespace;
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+
+        foreach ($iterator as $file) {
+            if ($file->isFile() && str_ends_with($file->getFilename(), 'Controller.php')) {
+                $class = $this->convertPathToClass($file->getPathname());
+                if (class_exists($class)) {
+                    $this->yamlControllers[$class] = $basePath;
+                    $this->registerController($class);
+                }
             }
         }
     }

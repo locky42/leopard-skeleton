@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Site;
 
 use App\Core\Attributes\Route;
 
