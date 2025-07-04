@@ -7,6 +7,8 @@ use Symfony\Component\Yaml\Yaml;
 use ReflectionClass;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ResponseInterface;
 
 class Router
 {
@@ -136,18 +138,19 @@ class Router
         return '/' . implode('/', $segments);
     }
 
-    public function dispatch(string $method, string $uri): void
+    public function dispatch(string $method, string $uri): ResponseInterface
     {
         $uri = rtrim($uri, '/') ?: '/';
+        $psr17Factory = new Psr17Factory();
 
         foreach ($this->routes as $route) {
             if ($route['method'] !== strtoupper($method)) {
                 continue;
             }
-        
+
             if (preg_match($route['regex'], $uri, $matches)) {
-                array_shift($matches); // видаляємо повний матч
-        
+                array_shift($matches); // Remove full match
+
                 $params = [];
                 foreach ($route['params'] as $index => $name) {
                     $params[$name] = $matches[$index] ?? null;
@@ -158,53 +161,56 @@ class Router
                 $args = [];
                 foreach ($refMethod->getParameters() as $param) {
                     $name = $param->getName();
-
                     $type = $param->getType()?->getName();
+
                     if (!array_key_exists($name, $params)) {
                         $args[] = null;
                         continue;
                     }
 
                     $value = $params[$name];
-                    
-                    // автоконвертація типів
+
+                    // Type conversion
                     if ($type === 'int') {
                         if (!ctype_digit($value)) {
-                            http_response_code(404);
-                            echo "404 Not Found (invalid int: $name)";
-                            return;
+                            return $this->createErrorResponse($psr17Factory, 404, "404 Not Found (invalid int: $name)");
                         }
                         $value = (int) $value;
                     } elseif ($type === 'float') {
                         if (!is_numeric($value)) {
-                            http_response_code(404);
-                            echo "404 Not Found (invalid float: $name)";
-                            return;
+                            return $this->createErrorResponse($psr17Factory, 404, "404 Not Found (invalid float: $name)");
                         }
                         $value = (float) $value;
                     } elseif ($type === 'bool') {
                         $value = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
                         if ($value === null) {
-                            http_response_code(404);
-                            echo "404 Not Found (invalid bool: $name)";
-                            return;
+                            return $this->createErrorResponse($psr17Factory, 404, "404 Not Found (invalid bool: $name)");
                         }
                     } elseif ($type !== null && $type !== 'string') {
-                        http_response_code(500);
-                        echo "Unsupported parameter type: $type";
-                        return;
+                        return $this->createErrorResponse($psr17Factory, 500, "Unsupported parameter type: $type");
                     }
-                    
+
                     $args[] = $value;
                 }
-                
-                $refMethod->invokeArgs($controller, $args);
-                return;
+
+                $response = $psr17Factory->createResponse(200);
+                $responseBody = $refMethod->invokeArgs($controller, $args);
+
+                // Ensure the response body is a string
+                $responseBody = $responseBody ?? ''; // Default to an empty string if null
+                $response->getBody()->write((string)$responseBody);
+                return $response;
             }
         }
 
-        http_response_code(404);
-        echo "404 Not Found";
+        return $this->createErrorResponse($psr17Factory, 404, "404 Not Found");
+    }
+
+    private function createErrorResponse(Psr17Factory $factory, int $statusCode, string $message): ResponseInterface
+    {
+        $response = $factory->createResponse($statusCode);
+        $response->getBody()->write($message);
+        return $response;
     }
 
     private function compilePath(string $path): array

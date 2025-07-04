@@ -7,13 +7,13 @@ use App\Core\Attributes\Route;
 class HomeController
 {
     #[Route('/', method: 'GET')]
-    public function index(): void
+    public function index(): string
     {
-        echo "Hello from HomeController::" . __FUNCTION__;  
+        return "Hello from HomeController::" . __FUNCTION__;  
     }
 
-    public function contact(): void
+    public function contact(): string
     {
-        echo "Hello from HomeController::contact";
+        return "Hello from HomeController::contact";
     }
 }
