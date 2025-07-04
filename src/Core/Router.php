@@ -115,9 +115,13 @@ class Router
                 }
             }
 
+            list($regex, $params) = $this->compilePath($routePath);
+
             $this->routes[] = [
                 'method' => $routeMethod,
                 'path' => $routePath,
+                'regex' => $regex,
+                'params' => $params,
                 'controller' => $controllerClass,
                 'action' => $methodName,
             ];
@@ -137,14 +141,81 @@ class Router
         $uri = rtrim($uri, '/') ?: '/';
 
         foreach ($this->routes as $route) {
-            if ($route['method'] === strtoupper($method) && $route['path'] === $uri) {
+            if ($route['method'] !== strtoupper($method)) {
+                continue;
+            }
+        
+            if (preg_match($route['regex'], $uri, $matches)) {
+                array_shift($matches); // видаляємо повний матч
+        
+                $params = [];
+                foreach ($route['params'] as $index => $name) {
+                    $params[$name] = $matches[$index] ?? null;
+                }
+
                 $controller = $this->container->get($route['controller']);
-                call_user_func([$controller, $route['action']]);
+                $refMethod = new \ReflectionMethod($controller, $route['action']);
+                $args = [];
+                foreach ($refMethod->getParameters() as $param) {
+                    $name = $param->getName();
+
+                    $type = $param->getType()?->getName();
+                    if (!array_key_exists($name, $params)) {
+                        $args[] = null;
+                        continue;
+                    }
+
+                    $value = $params[$name];
+                    
+                    // автоконвертація типів
+                    if ($type === 'int') {
+                        if (!ctype_digit($value)) {
+                            http_response_code(404);
+                            echo "404 Not Found (invalid int: $name)";
+                            return;
+                        }
+                        $value = (int) $value;
+                    } elseif ($type === 'float') {
+                        if (!is_numeric($value)) {
+                            http_response_code(404);
+                            echo "404 Not Found (invalid float: $name)";
+                            return;
+                        }
+                        $value = (float) $value;
+                    } elseif ($type === 'bool') {
+                        $value = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+                        if ($value === null) {
+                            http_response_code(404);
+                            echo "404 Not Found (invalid bool: $name)";
+                            return;
+                        }
+                    } elseif ($type !== null && $type !== 'string') {
+                        http_response_code(500);
+                        echo "Unsupported parameter type: $type";
+                        return;
+                    }
+                    
+                    $args[] = $value;
+                }
+                
+                $refMethod->invokeArgs($controller, $args);
                 return;
             }
         }
 
         http_response_code(404);
         echo "404 Not Found";
+    }
+
+    private function compilePath(string $path): array
+    {
+        $paramNames = [];
+        $regex = preg_replace_callback('#\{([^}]+)\}#', function ($matches) use (&$paramNames) {
+            $paramNames[] = $matches[1];
+            return '([^/]+)';
+        }, $path);
+        
+        $regex = '#^' . $regex . '$#';
+        return [$regex, $paramNames];
     }
 }
