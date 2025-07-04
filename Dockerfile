@@ -1,24 +1,34 @@
 FROM php:8.3-apache
 
-# Встановлюємо Composer
+# Install required PHP extensions and dependencies
+RUN apt-get update && apt-get install -y \
+    libxml2-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install dom
+
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Копіюємо код у контейнер
+# Copy project files
 COPY . /var/www/html
 
-# Встановлюємо права власності
+# Set permissions
 RUN chown -R www-data:www-data /var/www/html
 
-# Налаштовуємо Apache для використання папки public як кореневої
+# Configure Apache to use the public folder as the root
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf && \
     sed -i 's|<Directory /var/www/html>|<Directory /var/www/html/public>|' /etc/apache2/apache2.conf && \
     a2enmod rewrite
 
-# Дозволяємо переопределение конфігурації .htaccess
+# Allow .htaccess overrides
 RUN sed -i 's|AllowOverride None|AllowOverride All|' /etc/apache2/apache2.conf
 
-# Встановлюємо залежності через Composer
+# Install PHP dependencies via Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Додаємо ServerName для усунення попередження
+# Add ServerName to Apache config to suppress warnings
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# Clean up unnecessary files to reduce image size
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
