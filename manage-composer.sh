@@ -2,7 +2,7 @@
 
 # Function to display usage
 usage() {
-  echo "Usage: $0 {install|update|dump-autoload}"
+  echo "Usage: $0 {install|update|dump-autoload|require <package>}"
   exit 1
 }
 
@@ -24,6 +24,14 @@ case $1 in
   dump-autoload)
     echo "Running composer dump-autoload in the Docker container..."
     docker-compose exec web composer dump-autoload
+    ;;
+  require)
+    if [ -z "$2" ]; then
+      echo "Error: Please specify a package to require."
+      usage
+    fi
+    echo "Running composer require $2 in the Docker container..."
+    docker-compose exec web composer require "$2"
     ;;
   *)
     usage
