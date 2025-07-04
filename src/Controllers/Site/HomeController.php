@@ -4,12 +4,12 @@ namespace App\Controllers\Site;
 
 use App\Core\Attributes\Route;
 
-class HomeController
+class HomeController extends \App\Core\Controllers\HtmlController
 {
     #[Route('/', method: 'GET')]
     public function index(): string
     {
-        return "Hello from HomeController::" . __FUNCTION__;  
+        return $this->view->render('home', ['title' => 'Home Page', 'message' => 'Welcome to the Home Page!']);
     }
 
     public function contact(): string
