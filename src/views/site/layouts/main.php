@@ -5,6 +5,7 @@
  */
 $this->addStyle('/assets/css/global.css');
 $this->addStyle('/assets/css/footer.css');
+$this->addStyle('/assets/css/header.css');
 $this->addScript('/assets/js/global.js');
 
 ?>

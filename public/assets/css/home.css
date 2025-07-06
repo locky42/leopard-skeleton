@@ -1,0 +1,32 @@
+.documentation {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+.documentation h1, .documentation h2, .documentation h3 {
+    color: #333;
+}
+
+.documentation a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.documentation a:hover {
+    text-decoration: underline;
+}
+
+.documentation pre {
+    font-family: Consolas, monospace;
+    background-color: #000000;
+    padding: 10px;
+    border: 1px solid #12a512;
+    border-radius: 5px; /* Закруглені кути */
+    overflow-x: auto; /* Горизонтальна прокрутка для довгих рядків */
+    color: #00c22a;
+    white-space: pre-wrap; /* Перенос рядків */
+    line-height: 1;
+}

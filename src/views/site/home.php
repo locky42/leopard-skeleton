@@ -1,3 +1,6 @@
-<h2>
-Welcome to the Home Page
-</h2>
+<section>
+    <h3>Documentation</h3>
+    <div class="documentation">
+        <?= $documentation ?>
+    </div>
+</section>
