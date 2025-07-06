@@ -1,4 +1,13 @@
-<!-- filepath: /home/user/Projects/leopard-skeleton/views/site/layouts/main.php -->
+<?php
+
+/**
+ * @var \App\Core\View $this
+ */
+$this->addStyle('/assets/css/global.css');
+$this->addStyle('/assets/css/footer.css');
+$this->addScript('/assets/js/global.js');
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +23,7 @@
 <body>
     <?= $this->renderBlock('header', ['title' => $title ?? 'Default Title']) ?>
 
-    <main>
+    <main class="container">
         <?= $content ?>
     </main>
 

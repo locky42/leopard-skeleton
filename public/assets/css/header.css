@@ -1,0 +1,38 @@
+.site-header {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-bottom: 2px solid #ddd;
+    text-align: center; /* Центрування тексту */
+}
+
+.site-title {
+    font-size: 24px;
+    margin: 0;
+    color: #333;
+}
+
+.site-nav {
+    margin-top: 10px;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    display: inline-flex; /* Відображення списку в рядок */
+    gap: 15px;
+}
+
+.nav-item {
+    margin: 0;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}

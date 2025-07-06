@@ -1,4 +1,11 @@
 <!-- filepath: /home/user/Projects/leopard-skeleton/views/site/blocks/header.php -->
 <header>
     <h1><?= $title ?></h1>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
 </header>

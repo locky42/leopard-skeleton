@@ -1,0 +1,8 @@
+.site-footer {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-top: 2px solid #ddd;
+    text-align: center; /* Центрування тексту */
+    font-size: 14px;
+    color: #333;
+}
