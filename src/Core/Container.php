@@ -4,6 +4,15 @@ namespace App\Core;
 
 use Psr\Container\ContainerInterface;
 
+/**
+ * A simple dependency injection container implementation.
+ * 
+ * This class allows you to register service definitions and retrieve instances
+ * of those services. It supports lazy instantiation and resolves dependencies
+ * when requested.
+ * 
+ * @implements ContainerInterface
+ */
 class Container implements ContainerInterface
 {
     private array $instances = [];
