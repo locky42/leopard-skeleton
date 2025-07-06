@@ -16,6 +16,9 @@ class View
     private string $layout = 'layouts/main'; // Шаблон за замовчуванням
     private string $blocksPath = 'blocks';  // Шлях до блоків за замовчуванням
 
+    private array $styles = []; // Масив стилів
+    private array $scripts = []; // Масив скриптів
+
     /**
      * Constructor for the View class.
      *
@@ -46,6 +49,28 @@ class View
     public function setBlocksPath(string $blocksPath): void
     {
         $this->blocksPath = $blocksPath;
+    }
+
+    /**
+     * Adds a CSS style to the view.
+     *
+     * @param string $style The path or identifier of the style to be added.
+     * @return void
+     */
+    public function addStyle(string $style): void
+    {
+        $this->styles[] = $style;
+    }
+
+    /**
+     * Adds a JavaScript script to the view.
+     *
+     * @param string $script The path or identifier of the script to be added.
+     * @return void
+     */
+    public function addScript(string $script): void
+    {
+        $this->scripts[] = $script;
     }
 
     /**
@@ -106,5 +131,25 @@ class View
         ob_start();
         include $blockPath;
         return ob_get_clean();
+    }
+
+    /**
+     * Gets the array of added styles.
+     *
+     * @return array The array of added styles.
+     */
+    public function getStyles(): array
+    {
+        return $this->styles;
+    }
+
+    /**
+     * Gets the array of added scripts.
+     *
+     * @return array The array of added scripts.
+     */
+    public function getScripts(): array
+    {
+        return $this->scripts;
     }
 }

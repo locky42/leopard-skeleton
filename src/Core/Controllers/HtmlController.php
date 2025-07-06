@@ -20,16 +20,32 @@ abstract class HtmlController
     protected string $blocksPath = 'blocks';
     protected View $view;
 
+    /**
+     * Constructor method for the HtmlController class.
+     * Initializes the controller and sets up any necessary dependencies or configurations.
+     */
     public function __construct()
     {
         $this->view = new View(__DIR__ . '/../../../src/views/' . strtolower(explode('\\', static::class)[2]));
     }
 
+    /**
+     * Sets the layout for the HTML controller.
+     *
+     * @param string $layout The name of the layout to be set.
+     * @return void
+     */
     public function setLayout(string $layout): void
     {
         $this->layout = $layout;
     }
 
+    /**
+     * Sets the path to the blocks directory.
+     *
+     * @param string $blocksPath The file system path to the blocks directory.
+     * @return void
+     */
     public function setBlocksPath(string $blocksPath): void
     {
         $this->blocksPath = $blocksPath;
