@@ -28,7 +28,7 @@ class HomeController extends HtmlController
         $documentation = $parsedown->text($markdown);
 
         return $this->view->render('home', [
-            'title' => 'Leopard Framework',
+            'title' => $this->get('params')->get('app.name'),
             'documentation' => $documentation
         ]);
     }

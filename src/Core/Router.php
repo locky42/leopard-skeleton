@@ -58,10 +58,8 @@ class Router
      * @return void
      * @throws \Symfony\Component\Yaml\Exception\ParseException If the YAML file cannot be parsed.
      */
-    public function loadRoutesFromYaml(string $yamlPath): void
+    public function loadConfig(array $config): void
     {
-        $config = Yaml::parseFile($yamlPath);
-
         // Явні маршрути
         if (!empty($config['routes'])) {
             foreach ($config['routes'] as $route) {

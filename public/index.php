@@ -14,10 +14,25 @@ $container = new Container();
 $container->set('debug', function () {
     return new \App\Core\Helpers\Debug();
 });
+
+$container->set('params', function () {
+    return new \App\Core\Services\Params();
+});
+
+$container->get('params')->load(__DIR__ . '/../config/app.php');
+
+$container->set('config.routes', function () {
+    return new \App\Core\Services\Config();
+});
+
+$container->get('config.routes')->load(__DIR__ . '/../config/routes.yaml');
+
 $router = new Router($container);
 
 // Load routes and controllers
-$router->loadRoutesFromYaml(__DIR__ . '/../config/routes.yaml');
+$router->loadConfig(
+    $container->get('config.routes')->getAll()
+);
 $router->loadControllersFrom(__DIR__ . '/../src/Controllers');
 
 // Create a PSR-7 ServerRequest object using ServerRequestCreator
