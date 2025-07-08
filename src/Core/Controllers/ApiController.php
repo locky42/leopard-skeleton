@@ -39,9 +39,17 @@ abstract class ApiController extends AbstractController
                 array_walk_recursive($data, function ($value, $key) use ($xml) {
                     $xml->addChild($key, $value);
                 });
+                $response = $this->get('response')->withHeader('Content-Type', 'application/xml');
+                $this->container->set('response', function () use ($response) {
+                    return $response;
+                });
                 return $xml->asXML();
             case 'json':
             default:
+                $response = $this->get('response')->withHeader('Content-Type', 'application/json');
+                $this->container->set('response', function () use ($response) {
+                    return $response;
+                });
                 return json_encode($data);
         }
     }

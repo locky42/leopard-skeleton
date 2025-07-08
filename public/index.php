@@ -47,11 +47,10 @@ $request = $serverRequestCreator->fromGlobals();
 // Dispatch the request and get the response
 $response = $router->dispatch($request->getMethod(), $request->getUri()->getPath());
 
-// Send the response
-http_response_code($response->getStatusCode());
-foreach ($response->getHeaders() as $name => $values) {
+http_response_code($container->get('response')->getStatusCode());
+foreach ($container->get('response')->getHeaders() as $name => $values) {
     foreach ($values as $value) {
         header(sprintf('%s: %s', $name, $value), false);
     }
 }
-echo $response->getBody();
+echo $container->get('response')->getBody();

@@ -335,11 +335,15 @@ class Router
                 }
 
                 $response = $psr17Factory->createResponse(200);
-                $responseBody = $refMethod->invokeArgs($controller, $args);
+                $this->container->set('response', function () use ($response) {
+                    return $response;
+                });
 
+                $responseBody = $refMethod->invokeArgs($controller, $args);
+                
                 // Ensure the response body is a string
                 $responseBody = $responseBody ?? ''; // Default to an empty string if null
-                $response->getBody()->write((string)$responseBody);
+                $this->container->get('response')->getBody()->write((string)$responseBody);
                 return $response;
             }
         }

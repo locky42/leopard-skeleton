@@ -29,6 +29,10 @@ class Container implements ContainerInterface
     public function set(string $id, callable $definition): void
     {
         $this->definitions[$id] = $definition;
+        
+        if (isset($this->instances[$id])) {
+            $this->instances[$id] = ($this->definitions[$id])($this);
+        }
     }
 
     /**
