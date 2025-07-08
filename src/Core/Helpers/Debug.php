@@ -3,14 +3,13 @@
 namespace App\Core\Helpers;
 
 /**
- * Class System
- *
- * This class provides system-related helper methods for the application.
- * It is part of the Core module in the Leopard Skeleton project.
- *
- * @package Core\Helpers
+ * Debug class provides methods for debugging purposes.
+ * This class includes methods to dump variable contents and
+ * to terminate script execution after dumping, which is
+ * useful for inspecting variable states during development.
+ * * @package Core\Helpers
  */
-class System
+class Debug
 {
     /**
      * Dumps the provided arguments for debugging purposes.

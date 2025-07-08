@@ -8,7 +8,12 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 
 $psr17Factory = new Psr17Factory();
+global $container;
 $container = new Container();
+
+$container->set('debug', function () {
+    return new \App\Core\Helpers\Debug();
+});
 $router = new Router($container);
 
 // Load routes and controllers

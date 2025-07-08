@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Site;
 
+use App\Core\Controllers\HtmlController;
 use App\Core\Attributes\Route;
 use Parsedown;
 
@@ -12,7 +13,7 @@ use Parsedown;
  * and provides functionality specific to rendering the home page.
  * 
  */
-class HomeController extends \App\Core\Controllers\HtmlController
+class HomeController extends HtmlController
 {
     #[Route('/', method: 'GET')]
     public function index(): string

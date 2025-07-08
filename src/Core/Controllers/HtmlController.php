@@ -14,7 +14,7 @@ use App\Core\View;
  * @property string $blocksPath The directory path where block templates are located.
  * @property View $view The view instance used for rendering HTML content.
  */
-abstract class HtmlController
+abstract class HtmlController extends AbstractController
 {
     protected string $layout = 'layouts/main';
     protected string $blocksPath = 'blocks';
@@ -26,6 +26,7 @@ abstract class HtmlController
      */
     public function __construct()
     {
+        parent::__construct();
         $this->view = new View(__DIR__ . '/../../../src/views/' . strtolower(explode('\\', static::class)[2]));
     }
 
