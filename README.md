@@ -121,11 +121,6 @@ routes:
     method: PATCH
     path: /user/{id}/update
 
-  - controller: Site\UserController
-    action: deleteUser
-    method: DELETE
-    path: /user/{id}/delete
-
 controllers:
   - namespace: Site
     path: /site
@@ -219,55 +214,6 @@ controllers:
 - **`path`**: Базовий шлях для всіх методів контролера. Наприклад, всі методи контролера `Admin` будуть доступні за шляхами, що починаються з `/admin`.
 
 ---
-
-### Приклад YAML-файлу
-```yaml
-routes:
-  - controller: Site\HomeController
-    action: home
-    method: GET
-    path: /home
-
-  - controller: Site\UserController
-    action: getUser
-    method: GET
-    path: /user/{id}
-
-  - controller: Site\UserController
-    action: updateUser
-    method: PATCH
-    path: /user/{id}/update
-
-  - controller: Site\UserController
-    action: deleteUser
-    method: DELETE
-    path: /user/{id}/delete
-
-controllers:
-  - namespace: Site
-    path: /site
-
-  - namespace: Admin
-    path: /admin
-```
-
----
-
-### Як працює маршрутизація через YAML
-1. **Явні маршрути**:
-   - Визначаються в секції `routes`.
-   - Кожен маршрут має `controller`, `action`, `method` і `path`.
-
-2. **Базові шляхи контролерів**:
-   - Визначаються в секції `controllers`.
-   - Додають базовий шлях для всіх методів контролера.
-
-3. **Динамічні параметри**:
-   - Параметри в маршрутах, наприклад `{id}`, автоматично передаються в метод контролера.
-
----
-
-### Приклад використання
 #### YAML-конфігурація:
 ```yaml
 routes:
@@ -411,8 +357,6 @@ controllers:
 
 ---
 
-Ця функція дозволяє значно спростити процес маршрутизації та забезпечує масштабованість проекту.
-
 ## Інші приклади
 
 ### Маршрут для статичних сторінок
@@ -457,9 +401,14 @@ public function download(string $file): ResponseInterface
 
 ```
 ├── src/
-│   ├── Core/                # Основні класи (Router, View, Container)
 │   ├── Controllers/         # Контролери
+│       ├── Site/            # Контролери розділу Site
 │   ├── views/               # Шаблони та блоки
+│       ├── site/            # Файли розділу
+│           ├── blocks/      # Блоки
+│           ├── layouts/     # Шаблони
+│               ├── main.php # Головний шаблон
+│               ├── main/    # Блоки для шаблону main
 ├── tests/                   # Тести
 ├── config/                  # Конфігурація (routes.yaml)
 ├── public/                  # Публічна директорія (index.php, .htaccess)
@@ -474,19 +423,9 @@ public function download(string $file): ResponseInterface
 ### Через Docker
 1. Запустіть Docker-контейнери:
    ```bash
-   docker-compose up -d
+   ./manage-docker.sh start
    ```
 2. Відкрийте проект у браузері за адресою: [http://localhost:8080](http://localhost:8080).
-
-### Через Composer
-1. Встановіть залежності:
-   ```bash
-   composer install
-   ```
-2. Запустіть локальний сервер:
-   ```bash
-   php -S localhost:8080 -t public
-   ```
 
 ---
 
@@ -494,14 +433,6 @@ public function download(string $file): ResponseInterface
 Запустіть тести через PHPUnit:
 ```bash
 vendor/bin/phpunit
-```
-
----
-
-## Документація
-Документація доступна у файлі `docs/index.html`. Для генерації документації використовуйте phpDocumentor:
-```bash
-docker-compose exec web vendor/bin/phpdoc
 ```
 
 ---
