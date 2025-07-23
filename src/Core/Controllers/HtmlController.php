@@ -16,8 +16,22 @@ use App\Core\View;
  */
 abstract class HtmlController extends AbstractController
 {
+    /**
+     * @var string The layout file path used for rendering views.
+     * Default is 'layouts/main', which can be overridden in subclasses.
+     */
     protected string $layout = 'layouts/main';
+
+    /**
+     * @var string The directory path where block templates are located.
+     * Default is 'blocks', which can be overridden in subclasses.
+     */
     protected string $blocksPath = 'blocks';
+
+    /**
+     * @var View The view instance used for rendering HTML content.
+     * This is initialized in the constructor to point to the specific view directory.
+     */
     protected View $view;
 
     /**

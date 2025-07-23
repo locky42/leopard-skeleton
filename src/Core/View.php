@@ -12,12 +12,32 @@ namespace App\Core;
  */
 class View
 {
+    /**
+     * @var string The path to the directory containing view files.
+     */
     private string $viewsPath;
-    private string $layout = 'layouts/main'; // Шаблон за замовчуванням
-    private string $blocksPath = 'blocks';  // Шлях до блоків за замовчуванням
 
-    private array $styles = []; // Масив стилів
-    private array $scripts = []; // Масив скриптів
+    /**
+     * @var string The layout template to be used for rendering views.
+     * Defaults to 'layouts/main'.
+     */
+    private string $layout = 'layouts/main';
+
+    /**
+     * @var string The path to the directory containing block templates.
+     * Defaults to 'blocks'.
+     */
+    private string $blocksPath = 'blocks';
+
+    /**
+     * @var array An array of styles to be included in the view.
+     */
+    private array $styles = [];
+
+    /**
+     * @var array An array of scripts to be included in the view.
+     */
+    private array $scripts = [];
 
     /**
      * Constructor for the View class.

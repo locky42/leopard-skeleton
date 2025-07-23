@@ -15,7 +15,15 @@ use Psr\Container\ContainerInterface;
  */
 class Container implements ContainerInterface
 {
+    /**
+     * @var array The instances of services that have been created.
+     */
     private array $instances = [];
+
+    /**
+     * @var array The service definitions, where the key is the service identifier
+     * and the value is a callable that returns the service instance.
+     */
     private array $definitions = [];
 
     /**

@@ -12,6 +12,10 @@ namespace App\Core\Controllers;
  */
 abstract class ApiController extends AbstractController
 {
+    /**
+     * @var string The response type for the API controller.
+     * Default is 'json', which can be overridden in subclasses.
+     */
     protected string $responseType = 'json';
 
     /**

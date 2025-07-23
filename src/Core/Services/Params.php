@@ -10,6 +10,9 @@ namespace App\Core\Services;
  */
 class Params implements SettingInterface
 {
+    /**
+     * @var array The parameters loaded from PHP files.
+     */
     private array $params = [];
 
     /**

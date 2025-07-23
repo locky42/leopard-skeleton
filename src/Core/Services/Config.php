@@ -13,6 +13,9 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Config implements SettingInterface
 {
+    /**
+     * @var array The configuration data loaded from YAML files.
+     */
     private array $config = [];
 
     /**

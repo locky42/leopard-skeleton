@@ -24,9 +24,27 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Router
 {
+    /**
+     * @var Container The dependency injection container instance.
+     */
     private Container $container;
+
+    /**
+     * @var array The list of registered routes.
+     * Each route is an associative array with keys: 'method', 'path', 'regex', 'params', 'controller', and 'action'.
+     */
     private array $routes = [];
+
+    /**
+     * @var array The routes loaded from YAML configuration.
+     * Each entry is keyed by 'App\Controllers\ControllerName::actionName' and contains 'method' and 'path'.
+     */
     private array $yamlRoutes = [];
+
+    /**
+     * @var array The controllers loaded from YAML configuration.
+     * Each entry is keyed by the fully qualified controller class name and contains the base path.
+     */
     private array $yamlControllers = [];
 
     /**
@@ -351,6 +369,18 @@ class Router
         return $this->createErrorResponse($psr17Factory, 404, "404 Not Found");
     }
 
+    /**
+     * Creates a PSR-7 response with an error message.
+     *
+     * This method creates a response with the specified status code and message.
+     * It uses the Psr17Factory to create the response object and writes the message
+     * to the response body.
+     *
+     * @param Psr17Factory $factory The PSR-17 factory for creating responses.
+     * @param int $statusCode The HTTP status code for the response.
+     * @param string $message The error message to include in the response body.
+     * @return ResponseInterface The created PSR-7 response object.
+     */
     private function createErrorResponse(Psr17Factory $factory, int $statusCode, string $message): ResponseInterface
     {
         $response = $factory->createResponse($statusCode);
