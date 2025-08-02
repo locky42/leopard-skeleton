@@ -5,7 +5,30 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
+    git \
     && docker-php-ext-install dom
+
+# Install Xdebug
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+# Pass build arguments
+ARG XDEBUG_MODE
+ARG XDEBUG_START_WITH_REQUEST
+ARG XDEBUG_CLIENT_HOST
+ARG XDEBUG_CLIENT_PORT
+ARG XDEBUG_LOG_LEVEL
+
+# Configure Xdebug
+RUN mkdir -p /var/www/html/logs/xdebug && \
+    echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini && \
+    echo "xdebug.mode=${XDEBUG_MODE}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+    echo "xdebug.start_with_request=${XDEBUG_START_WITH_REQUEST}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+    echo "xdebug.client_host=${XDEBUG_CLIENT_HOST}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+    echo "xdebug.client_port=${XDEBUG_CLIENT_PORT}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+    echo "xdebug.log=/var/www/html/logs/xdebug/xdebug.log" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+    echo "xdebug.log_level=${XDEBUG_LOG_LEVEL}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+    echo "xdebug.output_dir=/var/www/html/logs/xdebug" >> /usr/local/etc/php/conf.d/xdebug.ini
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

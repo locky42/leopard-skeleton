@@ -2,37 +2,53 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    container_name: leopard-web
+    build:
+      context: .
+      args:
+        XDEBUG_MODE: ${XDEBUG_MODE}
+        XDEBUG_START_WITH_REQUEST: ${XDEBUG_START_WITH_REQUEST}
+        XDEBUG_CLIENT_HOST: ${XDEBUG_CLIENT_HOST}
+        XDEBUG_CLIENT_PORT: ${XDEBUG_CLIENT_PORT}
+        XDEBUG_LOG_LEVEL: ${XDEBUG_LOG_LEVEL}
     ports:
       - "8080:80"
     volumes:
       - .:/var/www/html
+      - ./logs:/var/www/html/logs
     environment:
       - APACHE_DOCUMENT_ROOT=/var/www/html/public
+      - XDEBUG_MODE=${XDEBUG_MODE}
+      - XDEBUG_START_WITH_REQUEST=${XDEBUG_START_WITH_REQUEST}
+      - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
+      - XDEBUG_CLIENT_PORT=${XDEBUG_CLIENT_PORT}
+      - XDEBUG_LOG_LEVEL=${XDEBUG_LOG_LEVEL}
     depends_on:
       - db
 
   db:
+    container_name: leopard-db
     image: mysql:8.4
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: appdb
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: apppass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
     ports:
       - "3306:3306"
 
   phpmyadmin:
+    container_name: leopard-phpmyadmin
     image: phpmyadmin/phpmyadmin
     restart: always
     ports:
       - "8081:80" # phpMyAdmin буде доступний за адресою http://localhost:8081
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
 
 volumes:
   db_data:

@@ -24,6 +24,7 @@ case $1 in
   reload)
     echo "Reloading Docker containers..."
     docker system prune -f
+    docker volume prune -f
     docker-compose build --no-cache
     docker-compose up -d
     ;;
