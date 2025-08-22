@@ -2,7 +2,7 @@
 
 namespace App\Controllers\Api;
 
-use App\Core\Attributes\Route;
+use Leopard\Core\Attributes\Route;
 
 /**
  * ApiController class extends the base ApiController from the application's core.
@@ -12,7 +12,7 @@ use App\Core\Attributes\Route;
  * and can be customized to implement specific API logic as needed.
  * 
  */
-class ApiController extends \App\Core\Controllers\ApiController
+class ApiController extends \Leopard\Core\Controllers\ApiController
 {
     #[Route('/api', method: 'GET')]
     public function index(): string

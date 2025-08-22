@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Core\Router;
-use App\Core\Container;
+use Leopard\Core\Router;
+use Leopard\Core\Container;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 
@@ -12,17 +12,17 @@ global $container;
 $container = new Container();
 
 $container->set('debug', function () {
-    return new \App\Core\Helpers\Debug();
+    return new \Leopard\Core\Helpers\Debug();
 });
 
 $container->set('params', function () {
-    return new \App\Core\Services\Params();
+    return new \Leopard\Core\Services\Params();
 });
 
 $container->get('params')->load(__DIR__ . '/../config/app.php');
 
 $container->set('config.routes', function () {
-    return new \App\Core\Services\Config();
+    return new \Leopard\Core\Services\Config();
 });
 
 $container->get('config.routes')->load(__DIR__ . '/../config/routes.yaml');

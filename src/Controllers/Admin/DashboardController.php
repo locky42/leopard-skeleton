@@ -2,7 +2,7 @@
 
 namespace App\Controllers\Admin;
 
-use App\Core\Attributes\Route;
+use Leopard\Core\Attributes\Route;
 
 class DashboardController
 {

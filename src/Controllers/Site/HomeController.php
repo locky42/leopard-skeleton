@@ -2,8 +2,8 @@
 
 namespace App\Controllers\Site;
 
-use App\Core\Controllers\HtmlController;
-use App\Core\Attributes\Route;
+use Leopard\Core\Controllers\HtmlController;
+use Leopard\Core\Attributes\Route;
 use Parsedown;
 
 /**
