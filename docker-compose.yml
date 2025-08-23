@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    container_name: leopard-web
+    container_name: ${DOCKER_CONTAINER_NAME}_web
     build:
       context: .
       args:
@@ -12,7 +12,7 @@ services:
         XDEBUG_CLIENT_PORT: ${XDEBUG_CLIENT_PORT}
         XDEBUG_LOG_LEVEL: ${XDEBUG_LOG_LEVEL}
     ports:
-      - "8080:80"
+      - ${DOCKER_PORT_WEB}
     volumes:
       - .:/var/www/html
       - ./logs:/var/www/html/logs
@@ -27,7 +27,7 @@ services:
       - db
 
   db:
-    container_name: leopard-db
+    container_name: ${DOCKER_CONTAINER_NAME}_db
     image: mysql:8.4
     restart: always
     environment:
@@ -38,14 +38,14 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - ${DOCKER_PORT_DB}
 
   phpmyadmin:
-    container_name: leopard-phpmyadmin
+    container_name: ${DOCKER_CONTAINER_NAME}_phpmyadmin
     image: phpmyadmin/phpmyadmin
     restart: always
     ports:
-      - "8081:80" # phpMyAdmin буде доступний за адресою http://localhost:8081
+      - ${DOCKER_PORT_ADMINER}
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
