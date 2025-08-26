@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+
+// Automatically load all commands from the src/Commands directory
+$commandsPath = __DIR__ . '/src/Commands';
+foreach (scandir($commandsPath) as $file) {
+    if (is_file($commandsPath . '/' . $file) && preg_match('/Command\.php$/', $file)) {
+        $className = 'App\\Commands\\' . pathinfo($file, PATHINFO_FILENAME);
+        if (class_exists($className)) {
+            $reflection = new ReflectionClass($className);
+            if (!$reflection->isAbstract()) {
+                $application->add(new $className());
+            }
+        }
+    }
+}
+
+$application->run();

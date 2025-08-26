@@ -19,6 +19,7 @@
     "require": {
         "php": "^8.3",
         "erusev/parsedown": "^1.7",
+        "symfony/console": "^7.3",
         "locky42/leopard-core": "dev-main"
     },
     "require-dev": {
