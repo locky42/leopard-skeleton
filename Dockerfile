@@ -3,10 +3,15 @@ FROM php:8.3-apache
 # Install required PHP extensions and dependencies
 RUN apt-get update && apt-get install -y \
     libxml2-dev \
+    libsqlite3-dev \
+    sqlite3 \
     zip \
     unzip \
     git \
     && docker-php-ext-install dom
+
+# Install PDO SQLite extension
+RUN docker-php-ext-install pdo_sqlite
 
 # Install Xdebug
 RUN pecl install xdebug \
@@ -26,9 +31,9 @@ RUN mkdir -p /var/www/html/logs/xdebug && \
     echo "xdebug.start_with_request=${XDEBUG_START_WITH_REQUEST}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
     echo "xdebug.client_host=${XDEBUG_CLIENT_HOST}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
     echo "xdebug.client_port=${XDEBUG_CLIENT_PORT}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.log=/var/www/html/logs/xdebug/xdebug.log" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+    echo "xdebug.log=/var/www/html/storage/logs/xdebug/xdebug.log" >> /usr/local/etc/php/conf.d/xdebug.ini && \
     echo "xdebug.log_level=${XDEBUG_LOG_LEVEL}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.output_dir=/var/www/html/logs/xdebug" >> /usr/local/etc/php/conf.d/xdebug.ini
+    echo "xdebug.output_dir=/var/www/html/storage/logs/xdebug" >> /usr/local/etc/php/conf.d/xdebug.ini
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

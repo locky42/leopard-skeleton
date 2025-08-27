@@ -2,8 +2,4 @@ composer.lock
 vendor/
 .vscode/
 .env
-logs/*.log
-logs/*.txt
-logs/xdebug/*.log
-logs/xdebug/*.xt
-logs/xdebug/gcstats.*
+storage/

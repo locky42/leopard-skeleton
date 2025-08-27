@@ -31,4 +31,18 @@ for example_file in $(find . -type f -name "*.example"); do
     fi
 done
 
+# Ensure the storage/database directory exists
+if [ ! -d "storage/database" ]; then
+    echo "Creating directory storage/database"
+    mkdir -p storage/database
+fi
+
+# Create the SQLite database file if it doesn't exist
+if [ ! -f "storage/database/db.sqlite" ]; then
+    echo "Creating SQLite database file storage/database/db.sqlite"
+    touch storage/database/db.sqlite
+else
+    echo "SQLite database file storage/database/db.sqlite already exists"
+fi
+
 echo "All .example files have been processed."
