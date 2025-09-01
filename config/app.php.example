@@ -1,8 +1,24 @@
 <?php
 
 return [
+    /**
+     * Application settings
+     */
     'app.name' => 'Leopard Framework',
     'app.version' => '1.0.0',
     'database.host' => 'localhost',
     'database.port' => 3306,
+
+    /**
+     * Database configuration
+     */
+    'database.host' => 'localhost',
+    'database.port' => 3306,
+    'database.user' => 'root',
+    'database.password' => '',
+    'database.driver' => 'pdo_sqlite',
+    'database.database' => '/var/www/html/storage/database/db.sqlite',
+    'database.dbname' => '',
+    'database.charset' => 'utf8mb4',
+    'database.models_path' => __DIR__ . '/../src/Models',
 ];

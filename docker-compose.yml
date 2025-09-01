@@ -15,8 +15,8 @@ services:
       - ${DOCKER_PORT_WEB}
     volumes:
       - .:/var/www/html
-      - ./logs:/var/www/html/storage/logs
-      - sqlite_data:/var/www/html/storage/database
+      - ./storage/logs:/var/www/html/storage/logs
+      - ./storage/database:/var/www/html/storage/database
     environment:
       - APACHE_DOCUMENT_ROOT=/var/www/html/public
       - XDEBUG_MODE=${XDEBUG_MODE}
@@ -24,8 +24,8 @@ services:
       - XDEBUG_CLIENT_HOST=${XDEBUG_CLIENT_HOST}
       - XDEBUG_CLIENT_PORT=${XDEBUG_CLIENT_PORT}
       - XDEBUG_LOG_LEVEL=${XDEBUG_LOG_LEVEL}
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
 
   # Enable if you want to use MySQL instead of SQLite
 
@@ -55,6 +55,18 @@ services:
   #     PMA_HOST: db
   #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
 
+  # db:
+  #   container_name: ${DOCKER_CONTAINER_NAME}_db
+  #   image: postgres:15
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #   volumes:
+  #     - db_data:/var/lib/postgresql/data
+  #   ports:
+  #     - ${DOCKER_PORT_DB}
+
 volumes:
   db_data:
-  sqlite_data:

@@ -4,8 +4,16 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
 
-$application = new Application();
+$params = new \Leopard\Core\Services\Params();
+$params->load(__DIR__ . '/config/app.php');
+
+$application = new Application($params->get('app.name'), $params->get('app.version'));
 
 // Automatically load all commands from the src/Commands directory
 $commandsPath = __DIR__ . '/src/Commands';
@@ -20,5 +28,31 @@ foreach (scandir($commandsPath) as $file) {
         }
     }
 }
+
+/** Add Doctrine commands */
+$config = ORMSetup::createAttributeMetadataConfiguration(
+    paths: [__DIR__ . '/src/Models'],
+    isDevMode: true
+);
+
+$connection = DriverManager::getConnection([
+    'driver' => $params->get('database.driver'),
+    'path' => $params->get('database.database'),
+    'host' => $params->get('database.host'),
+    'port' => $params->get('database.port'),
+    'user' => $params->get('database.user'),
+    'password' => $params->get('database.password'),
+    'dbname' => $params->get('database.dbname'),
+], $config);
+
+$entityManager = new EntityManager($connection, $config);
+$entityManagerProvider = new SingleManagerProvider($entityManager);
+
+$commands = ConsoleRunner::createApplication($entityManagerProvider)->all();
+
+foreach ($commands as $command) {
+    $application->add($command);
+}
+
 
 $application->run();

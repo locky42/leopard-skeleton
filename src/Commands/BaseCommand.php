@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Services\EntityManagerService;
 use Leopard\Core\Container;
 use Symfony\Component\Console\Command\Command;
 
@@ -37,14 +38,14 @@ abstract class BaseCommand extends Command
          */
         parent::__construct($name);
 
-        /**
-         * Initializes a new instance of the Container class and assigns it to the container property.
-         */
-        $this->container = new Container();
-        $this->container->set('params', function () {
-            return new \Leopard\Core\Services\Params();
+        global $container;
+        if (!$container) {
+            $container = new Container();
+        }
+        $this->container = $container;
+    
+        $this->container->set('entityManager', function () {
+            return new EntityManagerService();
         });
-        
-        $this->container->get('params')->load(__DIR__ . '/../../config/app.php');
     }
 }
