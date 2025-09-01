@@ -3,3 +3,7 @@
 ```bash
 vendor/bin/phpunit
 ```
+Також можна використати скрипт
+```
+bash ./run-tests
+```
