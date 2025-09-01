@@ -21,8 +21,8 @@
 ├── config/                  # Configurations
 ├── public/                  # Public directory (index.php, .htaccess)
 │   ├── assets/              # Public static files
-│       ├── css              # Styles
-│       ├── js               # Scripts
+│       ├── css/             # Styles
+│       ├── js/              # Scripts
 ├── docker-compose.yml       # Docker configuration
 ├── composer.json            # Composer configuration
 ```

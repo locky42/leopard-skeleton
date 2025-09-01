@@ -21,8 +21,8 @@
 ├── config/                  # Конфігурації
 ├── public/                  # Публічна директорія (index.php, .htaccess)
 │   ├── assets/              # Публічні статичні файли
-│       ├── css              # Стилі
-│       ├── js               # Скрипти
+│       ├── css/             # Стилі
+│       ├── js/              # Скрипти
 ├── docker-compose.yml       # Docker конфігурація
 ├── composer.json            # Composer конфігурація
 ```
