@@ -15,26 +15,36 @@ use Parsedown;
  */
 class HomeController extends HtmlController
 {
-    #[Route('/', method: 'GET')]
-    public function index(): string
-    {
+    public function readmy(string $path) {
         $this->view->addStyle('/assets/css/home.css');
         
         // Читаємо документацію з README.md
-        $markdown = file_get_contents(__DIR__ . '/../../../README.md');
+        $markdown = file_get_contents($path);
         
         // Конвертуємо Markdown у HTML
         $parsedown = new Parsedown();
-        $documentation = $parsedown->text($markdown);
-
+        $documentation = str_replace(['.md', '.MD'], '', $parsedown->text($markdown));
         return $this->view->render('home', [
             'title' => $this->get('params')->get('app.name'),
             'documentation' => $documentation
         ]);
     }
-
-    public function contact(): string
+    
+    #[Route('/', method: 'GET')]
+    public function index(): string
     {
-        return "Hello from HomeController::contact";
+        return $this->readmy(__DIR__ . '/../../../README.md');
+    }
+
+    #[Route('/README_UA', method: 'GET')]
+    public function readmyua(): string
+    {
+        return $this->readmy(__DIR__ . '/../../../README_UA.md');
+    }
+
+    #[Route('/docs/{lang}/{view}', method: 'GET')]
+    public function docs(string $lang, string $view): string
+    {
+        return $this->readmy(__DIR__ . '/../../../docs/' . $lang . '/' . $view . '.md');
     }
 }

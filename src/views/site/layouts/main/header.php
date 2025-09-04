@@ -1,5 +1,5 @@
 <header class="site-header">
-    <h1 class="site-title"><?= $title ?></h1>
+    <h1 class="site-title"><a href="/"><?= $title ?></a></h1>
     <!-- <nav class="site-nav">
         <ul class="nav-list">
             <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
