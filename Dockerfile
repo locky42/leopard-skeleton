@@ -20,6 +20,8 @@ RUN docker-php-ext-install pdo_sqlite pdo_pgsql
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug
 
+RUN rm -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
 # Pass build arguments
 ARG XDEBUG_MODE
 ARG XDEBUG_START_WITH_REQUEST

@@ -2,7 +2,7 @@
 
 namespace App\Commands;
 
-use App\Services\EntityManagerService;
+use Leopard\Doctrine\EntityManager;
 use Leopard\Core\Container;
 use Symfony\Component\Console\Command\Command;
 
@@ -45,7 +45,7 @@ abstract class BaseCommand extends Command
         $this->container = $container;
     
         $this->container->set('entityManager', function () {
-            return new EntityManagerService();
+            return EntityManager::getEntityManager();
         });
     }
 }

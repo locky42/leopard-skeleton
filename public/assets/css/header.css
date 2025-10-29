@@ -5,8 +5,8 @@
     text-align: center; /* Центрування тексту */
 }
 
-.site-title {
-    font-size: 24px;
+.site-title a {
+    font-size: 1.3em;
     margin: 0;
     color: #333;
 }

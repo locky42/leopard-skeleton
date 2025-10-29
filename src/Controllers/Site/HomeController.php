@@ -42,6 +42,12 @@ class HomeController extends HtmlController
         return $this->readmy(__DIR__ . '/../../../README_UA.md');
     }
 
+    #[Route('/README', method: 'GET')]
+    public function readmyPath(): string
+    {
+        return $this->readmy(__DIR__ . '/../../../README.md');
+    }
+
     #[Route('/docs/{lang}/{view}', method: 'GET')]
     public function docs(string $lang, string $view): string
     {

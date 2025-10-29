@@ -3,7 +3,7 @@
 namespace App\Controllers\Api;
 
 use Leopard\Core\Controllers\ApiController;
-use App\Services\EntityManagerService;
+use Leopard\Doctrine\EntityManager as CoreEntityManager;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -30,9 +30,6 @@ abstract class BaseApiController extends ApiController
     public function __construct()
     {
         parent::__construct();
-        $this->container->set('entityManager', function () {
-            return new EntityManagerService();
-        });
-        $this->entityManager = $this->container->get('entityManager')->getEntityManager();
+        $this->entityManager = CoreEntityManager::getEntityManager();
     }
 }

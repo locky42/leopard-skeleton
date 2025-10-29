@@ -3,23 +3,15 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Leopard\Core\Router;
-use Leopard\Core\Container;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 
 $psr17Factory = new Psr17Factory();
 global $container;
-$container = new Container();
 
 $container->set('debug', function () {
     return new \Leopard\Core\Helpers\Debug();
 });
-
-$container->set('params', function () {
-    return new \Leopard\Core\Services\Params();
-});
-
-$container->get('params')->load(__DIR__ . '/../config/app.php');
 
 $container->set('config.routes', function () {
     return new \Leopard\Core\Services\Config();
@@ -43,6 +35,18 @@ $serverRequestCreator = new ServerRequestCreator(
     $psr17Factory
 );
 $request = $serverRequestCreator->fromGlobals();
+
+// Додаємо CORS заголовки
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Credentials: true');
+
+// Обробляємо preflight OPTIONS запит
+if ($request->getMethod() === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
 // Dispatch the request and get the response
 $response = $router->dispatch($request->getMethod(), $request->getUri()->getPath());

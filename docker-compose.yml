@@ -17,6 +17,8 @@ services:
       - .:/var/www/html
       - ./storage/logs:/var/www/html/storage/logs
       - ./storage/database:/var/www/html/storage/database
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - APACHE_DOCUMENT_ROOT=/var/www/html/public
       - XDEBUG_MODE=${XDEBUG_MODE}

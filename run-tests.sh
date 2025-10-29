@@ -15,4 +15,4 @@ fi
 
 # Run PHPUnit tests
 echo "Running PHPUnit tests inside the Docker container..."
-docker-compose exec web vendor/bin/phpunit tests vendor/locky42/leopard-core/tests
+docker-compose exec web composer test

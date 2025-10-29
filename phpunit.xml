@@ -1,0 +1,13 @@
+<phpunit>
+    <testsuites>
+        <testsuite name="default">
+            <directory>tests</directory>
+        </testsuite>
+        <testsuite name="leopard-core">
+            <directory>vendor/locky42/leopard-core/tests</directory>
+        </testsuite>
+        <testsuite name="leopard-events">
+            <directory>vendor/locky42/leopard-events/tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
