@@ -1,11 +1,11 @@
 .container {
-    max-width: 1200px; /* Максимальна ширина контейнера */
-    margin: 0 auto; /* Центрування контейнера */
-    padding: 0 20px; /* Відступи по боках */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 @media (max-width: 768px) {
     .container {
-        padding: 0; /* Прибираємо відступи для мобільної версії */
+        padding: 0;
     }
 }
