@@ -4,6 +4,7 @@ namespace App\Controllers\Site;
 
 use Leopard\Core\Controllers\HtmlController;
 use Leopard\Core\Attributes\Route;
+use App\Helpers\MarkDownHelper;
 use Parsedown;
 
 /**
@@ -14,16 +15,23 @@ use Parsedown;
  * 
  */
 class HomeController extends HtmlController
-{
+{   
     public function readmy(string $path) {
         $this->view->addStyle('/assets/css/home.css');
         
-        // Читаємо документацію з README.md
         $markdown = file_get_contents($path);
         
-        // Конвертуємо Markdown у HTML
         $parsedown = new Parsedown();
-        $documentation = str_replace(['.md', '.MD'], '', $parsedown->text($markdown));
+        $parsedown->setSafeMode(false);
+        $parsedown->setMarkupEscaped(false);
+        
+        $html = $parsedown->text($markdown);
+        $html = MarkDownHelper::addHeaderIds($html);
+        
+        $documentation = str_replace(['.md', '.MD'], '', $html);
+
+        $this->view->getSeo()->setTitle($this->get('params')->get('app.name') . ' Documentation');
+
         return $this->view->render('home', [
             'title' => $this->get('params')->get('app.name'),
             'documentation' => $documentation

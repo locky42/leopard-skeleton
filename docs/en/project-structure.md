@@ -5,6 +5,7 @@
 │   ├── Commands/            # Console commands
 │   ├── Controllers/         # Controllers
 │       ├── Site/            # Site section controllers
+|   ├── EventHendlers        # Events hedlers
 │   ├── Models/              # Models
 │   ├── Services/            # Services
 │   ├── views/               # Templates and blocks

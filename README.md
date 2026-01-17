@@ -10,5 +10,6 @@
 5. [Working with Configs](docs/en/configs.md)
 6. [Working with Parameters](docs/en/params.md)
 7. [Dependency Container](docs/en/di-container.md)
-8. [Console Commands](docs/en/console-commands.md)
-9. [Testing](docs/en/testing.md)
+8. [Events](docs/en/events.md)
+9. [Console Commands](docs/en/console-commands.md)
+10. [Testing](docs/en/testing.md)
