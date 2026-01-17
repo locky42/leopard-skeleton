@@ -46,7 +46,7 @@ CoreEntityManager::setEntityManager($entityManager);
 
 foreach (glob(__DIR__ . '/src/EventHandlers/*.php') as $filename) {
     $className = 'App\EventHandlers\\' . basename($filename, '.php');
-    if ($className instanceof \App\EventHandlers\EventHandlerInterface) {
+    if (class_exists($className) && is_subclass_of($className, \App\EventHandlers\EventHandlerInterface::class)) {
         $handler = new $className();
         $handler->boot();
     }
