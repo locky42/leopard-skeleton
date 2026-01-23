@@ -51,7 +51,8 @@ RUN chown -R www-data:www-data /var/www/html
 # Configure Apache to use the public folder as the root
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf && \
     sed -i 's|<Directory /var/www/html>|<Directory /var/www/html/public>|' /etc/apache2/apache2.conf && \
-    a2enmod rewrite
+    a2enmod rewrite ssl remoteip && \
+    a2ensite default-ssl.conf
 
 # Allow .htaccess overrides
 RUN sed -i 's|AllowOverride None|AllowOverride All|' /etc/apache2/apache2.conf

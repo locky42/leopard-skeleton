@@ -1,6 +1,7 @@
 composer.lock
 vendor/
-.vscode/
 .env
 storage/
 .phpunit.result.cache
+Docker/apache2/ssl/
+!*.gitkeep
