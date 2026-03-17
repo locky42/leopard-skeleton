@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install dom
 
 # Install PDO SQLite and PDO PostgreSQL extensions
-RUN docker-php-ext-install pdo_sqlite pdo_pgsql
+RUN docker-php-ext-install pdo_sqlite pdo_pgsql pdo_mysql
 
 # Install Xdebug
 RUN pecl install xdebug \

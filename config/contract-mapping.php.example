@@ -1,0 +1,18 @@
+<?php
+
+// Copy this file to: config/contract-mappings.php
+
+use Leopard\Core\Factory\ContractFactory;
+use Leopard\User\Contracts\Models\UserInterface;
+use Leopard\Admin\Contracts\Models\AdminUserInterface;
+use Leopard\Admin\Contracts\Models\AdminRoleInterface;
+use Leopard\Admin\Contracts\Models\AdminPermissionInterface;
+use App\Models\User;
+use App\Models\Admin\AdminUser;
+use App\Models\Admin\AdminRole;
+use App\Models\Admin\AdminPermission;
+
+// ContractFactory::register(UserInterface::class, User::class);
+// ContractFactory::register(AdminUserInterface::class, AdminUser::class);
+// ContractFactory::register(AdminRoleInterface::class, AdminRole::class);
+// ContractFactory::register(AdminPermissionInterface::class, AdminPermission::class);

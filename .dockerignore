@@ -1,0 +1,3 @@
+storage/database/mysql-data/
+.git/
+node_modules/

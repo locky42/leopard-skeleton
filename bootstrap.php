@@ -1,14 +1,20 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config/contract-mappings.php';
 
-use Doctrine\DBAL\DriverManager;
-use Doctrine\ORM\EntityManager;
-use Leopard\Doctrine\EntityManager as CoreEntityManager;
-use Leopard\Core\Container;
 use Doctrine\ORM\ORMSetup;
-use Symfony\Component\Console\Application;
+use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\Common\EventManager;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
+use Symfony\Component\Console\Application;
+use Leopard\Core\Container;
+use Leopard\Events\EventManager as LeopardEventManager;
+use Leopard\Doctrine\EntityManager as CoreEntityManager;
+use Leopard\Doctrine\Events\AfterInitEventManagerEvent;
+use Leopard\Doctrine\Events\BeforeInitEventManagerEvent;
+use Leopard\Doctrine\Events\BeforeInitEntityManagerEvent;
 
 global $container;
 $container = new Container();
@@ -25,9 +31,18 @@ $application = new Application($params->get('app.name'), $params->get('app.versi
 
 /** Add Doctrine commands */
 $config = ORMSetup::createAttributeMetadataConfiguration(
-    paths: [__DIR__ . '/src/Models'],
+    paths: [
+        __DIR__ . '/src/Models',
+        __DIR__ . '/src/Models/Admin',
+    ],
     isDevMode: true
 );
+
+LeopardEventManager::doEvent(BeforeInitEventManagerEvent::class);
+
+$eventManager = new EventManager();
+
+LeopardEventManager::doEvent(AfterInitEventManagerEvent::class, $eventManager);
 
 $connection = DriverManager::getConnection([
     'driver' => $params->get('database.driver'),
@@ -37,9 +52,11 @@ $connection = DriverManager::getConnection([
     'user' => $params->get('database.user'),
     'password' => $params->get('database.password'),
     'dbname' => $params->get('database.dbname'),
-]);
+], null, $eventManager);
 
-$entityManager = new EntityManager($connection, $config);
+LeopardEventManager::doEvent(BeforeInitEntityManagerEvent::class);
+
+$entityManager = new EntityManager($connection, $config, $eventManager);
 $entityManagerProvider = new SingleManagerProvider($entityManager);
 
 CoreEntityManager::setEntityManager($entityManager);
