@@ -29,3 +29,19 @@ services:
       - XDEBUG_CLIENT_PORT=${XDEBUG_CLIENT_PORT}
       - XDEBUG_LOG_LEVEL=${XDEBUG_LOG_LEVEL}
 
+  db:
+    container_name: ${DOCKER_CONTAINER_NAME}_db
+    image: mysql:8.0
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - ${DOCKER_PORT_DB}
+
+volumes:
+  db_data:

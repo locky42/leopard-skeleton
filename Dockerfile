@@ -1,80 +1,61 @@
 FROM php:8.3-apache
 
-# Install required PHP extensions and dependencies
-RUN apt-get update && apt-get install -y \
-    libxml2-dev \
-    libsqlite3-dev \
-    libpq-dev \
-    sqlite3 \
-    zip \
-    unzip \
-    git \
-    postgresql \
-    postgresql-contrib \
-    && docker-php-ext-install dom
+# Xdebug argument configuration
+ARG XDEBUG_MODE=off
+ARG XDEBUG_START_WITH_REQUEST=no
+ARG XDEBUG_CLIENT_HOST=host.docker.internal
+ARG XDEBUG_CLIENT_PORT=9003
+ARG XDEBUG_LOG_LEVEL=0
 
-# Install PDO SQLite and PDO PostgreSQL extensions
-RUN docker-php-ext-install pdo_sqlite pdo_pgsql
+# Download the automated PHP extension installer script
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-# Install Xdebug
-RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug
+# Install system minimums, SSL certificate utility, and clean up as much junk as possible
+RUN apt-get update && apt-get install -y --no-install-recommends sqlite3 zip unzip git ssl-cert \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* /usr/share/man/*
 
-RUN rm -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+# Install PHP extensions and force removal of all development build temporary files
+RUN IPE_DONT_CLEAN=0 install-php-extensions dom pdo_sqlite pdo_pgsql pdo_mysql xdebug
 
-# Pass build arguments
-ARG XDEBUG_MODE
-ARG XDEBUG_START_WITH_REQUEST
-ARG XDEBUG_CLIENT_HOST
-ARG XDEBUG_CLIENT_PORT
-ARG XDEBUG_LOG_LEVEL
+# Xdebug configuration (using clean Heredoc style)
+# Logs are routed to the mounted storage directory
+RUN { \
+    echo "xdebug.mode=${XDEBUG_MODE}"; \
+    echo "xdebug.start_with_request=${XDEBUG_START_WITH_REQUEST}"; \
+    echo "xdebug.client_host=${XDEBUG_CLIENT_HOST}"; \
+    echo "xdebug.client_port=${XDEBUG_CLIENT_PORT}"; \
+    echo "xdebug.log_level=${XDEBUG_LOG_LEVEL}"; \
+    echo "xdebug.log=/var/www/html/storage/logs/xdebug/xdebug.log"; \
+} >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-# Configure Xdebug
-RUN echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.mode=${XDEBUG_MODE}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.start_with_request=${XDEBUG_START_WITH_REQUEST}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.client_host=${XDEBUG_CLIENT_HOST}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.client_port=${XDEBUG_CLIENT_PORT}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.log=/var/www/html/storage/logs/xdebug/xdebug.log" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.log_level=${XDEBUG_LOG_LEVEL}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-    echo "xdebug.output_dir=/var/www/html/storage/logs/xdebug" >> /usr/local/etc/php/conf.d/xdebug.ini
-
-# Install Composer
+# Composer installation
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy project files
-COPY . /var/www/html
+# Forcefully copy Apache configurations
+COPY ./Docker/apache2/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY ./Docker/apache2/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html
+# Enable Apache modules and site configuration
+RUN a2enmod rewrite ssl remoteip expires headers && a2ensite default-ssl.conf
 
-# Configure Apache to use the public folder as the root
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf && \
-    sed -i 's|<Directory /var/www/html>|<Directory /var/www/html/public>|' /etc/apache2/apache2.conf && \
-    a2enmod rewrite ssl remoteip && \
-    a2ensite default-ssl.conf
+# Ensure default Apache log directories exist as real folders, not symlinks
+RUN rm -f /var/log/apache2/access.log /var/log/apache2/error.log \
+    && mkdir -p /var/log/apache2 \
+    && mkdir -p /var/www/html/storage/logs/apache2 \
+    && mkdir -p /var/www/html/storage/logs/xdebug
 
-# Allow .htaccess overrides
-RUN sed -i 's|AllowOverride None|AllowOverride All|' /etc/apache2/apache2.conf
+# HARDCODE DOCUMENT ROOT INTO THE DEFAULT IMAGE VARIABLES
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf /etc/apache2/apache2.conf
 
-# Install PHP dependencies via Composer
-RUN composer install --no-dev --optimize-autoloader
+# Create directory for certificates
+RUN mkdir -p /etc/apache2/ssl \
+    && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Add ServerName to Apache config to suppress warnings
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-# Install pgvector extension
-RUN apt-get install -y postgresql-server-dev-all && \
-    git clone https://github.com/pgvector/pgvector.git && \
-    cd pgvector && \
-    make && \
-    make install && \
-    cd .. && rm -rf pgvector
-
-# Clean up unnecessary files to reduce image size
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Setting sqlite database file creation and permissions
-RUN [ -f /var/www/html/storage/database/db.sqlite ] || touch /var/www/html/storage/database/db.sqlite
-RUN chown -R www-data:www-data storage/database
-RUN chmod 776 /var/www/html/storage/database/db.sqlite
+# DYNAMIC CHECK UPON CONTAINER START
+CMD ["sh", "-c", "if [ ! -f /etc/apache2/ssl/project.pem ]; then \
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout /etc/apache2/ssl/project.key \
+        -out /etc/apache2/ssl/project.pem \
+        -subj '/C=US/ST=State/L=City/O=Organization/CN=localhost'; \
+    fi && apache2-foreground"]

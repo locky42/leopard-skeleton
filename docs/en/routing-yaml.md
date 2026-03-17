@@ -1,114 +1,75 @@
 
 # Routing via YAML
 
-## Route Configuration
+## 1) Explicit routes (`routes`)
+
 ```yaml
 routes:
-  - controller: Site\HomeController
-    action: home
+  - controller: Site/UserController
+    action: getProfile
     method: GET
-    path: /home
+    path: /profile/{id}
 
-  - controller: Site\UserController
-    action: getUser
+  - controller: "\\App\\Controllers\\Admin\\DashboardController"
+    action: index
     method: GET
-    path: /user/{id}
-
-  - controller: Site\UserController
-    action: deleteUser
-    method: DELETE
-    path: /user/{id}/delete
-```
-- **`controller`**: The name of the controller that defines the class handling the route.
-- **`action`**: The controller method that will be called to handle the route.
-- **`method`**: The HTTP method supported by the route (e.g., `GET`, `POST`, `DELETE`).
-- **`path`**: The route path, which can include dynamic parameters like `{id}`.
-
----
-
-## Base Path for Controllers
-```yaml
-controllers:
-  - namespace: Site
-    path: /site
-
-  - namespace: Admin
-    path: /admin
-```
-- **`namespace`**: The namespace of the controller, which defines a group of routes.
-- **`path`**: The base path for all methods of the controller. For example, all methods of the `Admin` controller will be accessible via paths starting with `/admin`.
-
----
-
-## Example YAML File
-```yaml
-routes:
-  - controller: Site\HomeController
-    action: home
-    method: GET
-    path: /home
-
-  - controller: Site\UserController
-    action: getUser
-    method: GET
-    path: /user/{id}
-
-  - controller: Site\UserController
-    action: updateUser
-    method: PATCH
-    path: /user/{id}/update
-
-controllers:
-  - namespace: Site
-    path: /site
-
-  - namespace: Admin
     path: /admin
 ```
 
----
+- `controller`:
+  - relative value is resolved as `App\\Controllers\\{controller}`
+  - absolute FQCN can be used (leading `\\`)
+- `action`: public controller method name
+- `method`: HTTP method (stored uppercased)
+- `path`: route path with optional dynamic params
 
-## How Routing via YAML Works
-1. **Explicit Routes**:
-   - Defined in the `routes` section.
-   - Each route has a `controller`, `action`, `method`, and `path`.
+## 2) Controller groups (`controllers`)
 
-2. **Base Paths for Controllers**:
-   - Defined in the `controllers` section.
-   - Add a base path for all methods of the controller.
-
-3. **Dynamic Parameters**:
-   - Parameters in routes, such as `{id}`, are automatically passed to the controller method.
-
----
-
-## Usage Example
-### YAML Configuration:
 ```yaml
-routes:
-  - controller: Site\UserController
-    action: getUser
-    method: GET
-    path: /user/{id}
+controllers:
+  - controller: Tools/HashController
+    path: /tools
+
+  - namespace: Api
+    path: /api
 ```
 
-### Controller:
-```php
-namespace App\Controllers\Site;
+Supported entries:
 
-class UserController
-{
-    public function getUser(int $id): string
-    {
-        return "User ID: $id";
-    }
-}
-```
+- `controller` + `path`: register one controller for auto-routing
+- `namespace` + `path`: scan all `*Controller.php` in `src/Controllers/{namespace}` and register them
 
-### Result:
-- **Path**: `/user/123`
-- **Result**: Returns the text "User ID: 123".
+Only methods ending with `Action` are auto-routed.
 
----
+## 3) Auto-routing conventions
 
-This documentation now covers all aspects of routing via YAML, including explicit routes, base paths for controllers, and dynamic parameters.
+For controller methods ending with `Action`:
+
+- HTTP prefix is detected from method name: `get|post|put|delete|patch|options|head`
+- if no prefix exists, method defaults to `GET`
+- `indexAction` maps to controller root path
+- camelCase/snake_case action names are converted to kebab-case path segments
+
+Examples:
+
+- `getProfileAction` → `GET .../profile`
+- `postSaveDataAction` → `POST .../save-data`
+- `aboutAction` → `GET .../about`
+
+## 4) Base path rules (`controllers[].path`)
+
+- `path: /` → `/{controller}` and `/{controller}/{action}`
+- `path: ""` → `/` and `/{action}`
+- `path: /base` → `/base/{controller}` and `/base/{controller}/{action}`
+
+## 5) Dynamic parameters
+
+Router supports:
+
+- `{id}`: one URI segment
+- `{id:\\d+}`: custom regex
+- `{path}`: greedy parameter (captures `/`)
+
+If controller parameter type is `int|float|bool` and conversion fails, router returns `404`.
+
+`HEAD` requests can match `GET` routes.
